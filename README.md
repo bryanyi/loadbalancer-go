@@ -10,6 +10,8 @@ This project is a simple custom loadbalancer using the round-robin algorithm to 
 
 Similarly to Spring's API Gateway, there's a YAML file to register the endpoints that will be used.
 
+This project also served to help get some practice using Go for the first time.
+
 ## Run the program
 
 - _NOTE_: This program uses ports 5001, 5002, 5003, 5004, 5005, and 9000. 9000 is the loadbalancer, and the rest are the simple servers that are cycled through.
