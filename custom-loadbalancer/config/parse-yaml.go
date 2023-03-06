@@ -6,7 +6,11 @@ import (
 	"path/filepath"
 )
 
-type Config struct {
+var (
+	configFileName string = "config.yml"
+)
+
+type config struct {
 	Loadbalancer struct {
 		Servers []struct {
 			Id        int    `yaml:"id"`
@@ -15,13 +19,13 @@ type Config struct {
 	}
 }
 
-func (c *Config) parseConfig() Config {
-	filename, _ := filepath.Abs("server-list.yaml")
+func (c *config) parseConfig() config {
+	filename, _ := filepath.Abs(configFileName)
 
 	yamlFile, err := ioutil.ReadFile(filename)
 	checkErr(err)
 
-	var config Config
+	var config config
 
 	err = yaml.Unmarshal(yamlFile, &config)
 	checkErr(err)
@@ -38,7 +42,7 @@ func checkErr(e error) {
 
 func GetServerList() []string {
 	var serverList []string
-	var c Config
+	var c config
 	parsedYaml := c.parseConfig()
 	serversArr := parsedYaml.Loadbalancer.Servers
 

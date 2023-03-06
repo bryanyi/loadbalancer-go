@@ -1,18 +1,16 @@
 package loadbalancer
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"strconv"
-
-	"github.com/spf13/viper"
 )
 
 var (
-	baseURL    = "http://localhost:500"
-	serverList = []string{}
+	serverList            = []string{}
+	configFileName string = "config.yml"
 )
 
 type LoadBalancer struct {
@@ -24,13 +22,6 @@ type Endpoints struct {
 	List []*url.URL
 }
 
-func compileServerEndpoints() {
-	vi := viper.New()
-	vi.SetConfigFile("server-list.yml")
-	vi.ReadInConfig()
-
-}
-
 func (e *Endpoints) Shuffle() {
 	temp := e.List[0]
 	e.List = e.List[1:]
@@ -40,19 +31,29 @@ func (e *Endpoints) Shuffle() {
 func makeRequests(lb *LoadBalancer, endpoints *Endpoints) func(w http.ResponseWriter, r *http.Request) {
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		for !testServer(endpoints.List[0].String()) {
+		targetEndpoint := endpoints.List[0]
+
+		for !testServer(targetEndpoint.String()) {
+			fmt.Println("ENDPOINT ", targetEndpoint, " IS DOWN...")
+			fmt.Println("Reshuffling endpoints")
+
 			endpoints.Shuffle()
+
+			targetEndpoint = endpoints.List[0]
 		}
 
-		lb.RevProxy = *httputil.NewSingleHostReverseProxy(endpoints.List[0])
+		fmt.Println("reverse proxy to endpoint of: ", targetEndpoint)
+
+		// Reveive the endpoint that we are transfering to
+		lb.RevProxy = *httputil.NewSingleHostReverseProxy(targetEndpoint)
 		endpoints.Shuffle()
+		// Serve the endpoint we specified
 		lb.RevProxy.ServeHTTP(w, r)
 	}
 }
 
 func createEndpoint(endpoint string, idx int) *url.URL {
-	link := endpoint + strconv.Itoa(idx)
-	url, _ := url.Parse(link)
+	url, _ := url.Parse(endpoint)
 	return url
 }
 
@@ -72,6 +73,8 @@ func testServer(endpoint string) bool {
 
 func MakeLoadBalancer(serverCount int, serverList []string) {
 
+	fmt.Println("Loadbalancer started!")
+
 	// instantiate objects
 	var lb LoadBalancer
 	var endpoint Endpoints
@@ -79,13 +82,15 @@ func MakeLoadBalancer(serverCount int, serverList []string) {
 	// Server + Router
 	router := http.NewServeMux()
 	server := http.Server{
-		Addr:    "9000",
+		Addr:    ":9000",
 		Handler: router,
 	}
 
 	// Creating the endpoints
 	for i := 0; i < serverCount; i++ {
-		endpoint.List = append(endpoint.List, createEndpoint(baseURL, i))
+		serverEndpoint := serverList[i]
+		fmt.Println("server endpoint received from config: ", serverEndpoint)
+		endpoint.List = append(endpoint.List, createEndpoint(serverEndpoint, i))
 	}
 
 	// Handler functions

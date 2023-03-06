@@ -1,16 +1,12 @@
-FROM golang:1.19.0
+FROM golang:1.19.3
 
 WORKDIR /app
-
 COPY go.mod ./
-COPY go.sum ./
-
 RUN go mod download
+COPY . .
 
-COPY *.go ./
-
-RUN go build -o /bryanyiloadbalancer
+RUN go build -o /main main.go
 
 EXPOSE 5001
 
-CMD [ "go run main.go" ]
+ENTRYPOINT [ "/main" ]

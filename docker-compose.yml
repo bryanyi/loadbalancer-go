@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  go-server-1:
+    image: 'bryanyidev/go-server-1:latest'
+    container_name: go-server-1
+    ports:
+      - '5001:5001'
+  go-server-2:
+    image: 'bryanyidev/go-server-2:latest'
+    container_name: go-server-2
+    ports:
+      - '5002:5002'
+  go-server-3:
+    image: 'bryanyidev/go-server-3:latest'
+    container_name: go-server-3
+    ports:
+      - '5003:5003'
+  go-server-4:
+    image: 'bryanyidev/go-server-4:latest'
+    container_name: go-server-4
+    ports:
+      - '5004:5004'
+  loadbalancer:
+    image: 'bryanyidev/custom-loadbalancer:latest'
+    container_name: custom-loadbalancer
+    ports:
+      - '9000:9000'
+    depends_on:
+      - go-server-1
+      - go-server-2
+      - go-server-3
+      - go-server-4

@@ -7,6 +7,6 @@ COPY . .
 
 RUN go build -o /main main.go
 
-EXPOSE 5003
+EXPOSE 9000
 
 ENTRYPOINT [ "/main" ]
