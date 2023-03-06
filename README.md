@@ -19,6 +19,6 @@ This project also served to help get some practice using Go for the first time.
 1. Make sure to have Docker installed.
 2. Make sure to have your ports 5001, 5002, 5003, 5004, 5005, and 9000 open.
 3. Run `docker compose up -d`
-4. Open a browser or Postman and go to `http://localhost9000`
+4. Open a browser or Postman and go to `http://localhost:9000`
 5. Continually refresh the page to see the servers being cycled through.
-6. In the terminal, run `docker logs` to see the loadbalancer prepping the endpoint, and how it handles a non-existent server
+6. In the terminal, run `docker logs {container-id}` to see the loadbalancer prepping the endpoint, and how it handles a non-existent server
