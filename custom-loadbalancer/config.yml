@@ -1,12 +1,12 @@
 loadbalancer:
   servers:
     - id: 1
-      serverURI: http://localhost:5001
+      serverURI: http://host.docker.internal:5001
     - id: 2
-      serverURI: http://localhost:5002
+      serverURI: http://host.docker.internal:5002
     - id: 3
-      serverURI: http://localhost:5003
+      serverURI: http://host.docker.internal:5003
     - id: 4
-      serverURI: http://localhost:5004
+      serverURI: http://host.docker.internal:5004
     - id: 5
-      serverURI: http://localhost:5005
+      serverURI: http://host.docker.internal:5005
