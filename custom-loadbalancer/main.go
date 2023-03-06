@@ -1,29 +1,19 @@
 package main
 
 import (
+	"bryanyi.com/config"
+	"bryanyi.com/loadbalancer"
 	"fmt"
-
-	// "bryanyi.com/loadbalancer"
-	"github.com/spf13/viper"
 )
 
 func main() {
-	// loadbalancer.MakeLoadBalancer(3)
+	serverList := config.GetServerList()
+	serverCount := len(serverList)
 
-	vi := viper.New()
-	vi.SetConfigFile("application.yml")
-	vi.ReadInConfig()
-	server1Port := vi.GetString("loadbalancer.servers.server1.uri")
-	server2Port := vi.GetString("loadbalancer.servers.server2.uri")
-	server3Port := vi.GetString("loadbalancer.servers.server3.uri")
-	server4Port := vi.GetString("loadbalancer.servers.server4.uri")
+	fmt.Println("server count: ", serverCount, "servers array: ", serverList)
 
-	serverArray := []string{}
-	serverArray = append(serverArray, server1Port)
-	serverArray = append(serverArray, server2Port)
-	serverArray = append(serverArray, server3Port)
-	serverArray = append(serverArray, server4Port)
-
-	fmt.Println(serverArray)
+	if serverCount > 5 {
+		loadbalancer.MakeLoadBalancer(serverCount, serverList)
+	}
 
 }

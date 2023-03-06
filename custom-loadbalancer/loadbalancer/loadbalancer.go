@@ -6,10 +6,13 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"strconv"
+
+	"github.com/spf13/viper"
 )
 
 var (
-	baseURL = "http://localhost:500"
+	baseURL    = "http://localhost:500"
+	serverList = []string{}
 )
 
 type LoadBalancer struct {
@@ -19,6 +22,13 @@ type LoadBalancer struct {
 // List of the endpoints from the available servers
 type Endpoints struct {
 	List []*url.URL
+}
+
+func compileServerEndpoints() {
+	vi := viper.New()
+	vi.SetConfigFile("server-list.yml")
+	vi.ReadInConfig()
+
 }
 
 func (e *Endpoints) Shuffle() {
@@ -60,7 +70,7 @@ func testServer(endpoint string) bool {
 	return true
 }
 
-func MakeLoadBalancer(amount int) {
+func MakeLoadBalancer(serverCount int, serverList []string) {
 
 	// instantiate objects
 	var lb LoadBalancer
@@ -74,7 +84,7 @@ func MakeLoadBalancer(amount int) {
 	}
 
 	// Creating the endpoints
-	for i := 0; i < amount; i++ {
+	for i := 0; i < serverCount; i++ {
 		endpoint.List = append(endpoint.List, createEndpoint(baseURL, i))
 	}
 

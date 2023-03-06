@@ -1,0 +1,10 @@
+loadbalancer:
+  servers:
+    - id: 1
+      serverURI: http://localhost:5001
+    - id: 2
+      serverURI: http://localhost:5002
+    - id: 3
+      serverURI: http://localhost:5003
+    - id: 4
+      serverURI: http://localhost:5004
